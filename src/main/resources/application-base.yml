@@ -1,0 +1,11 @@
+springdoc:
+  api-docs:
+    enabled: true  # OpenAPI 문서 활성화
+  swagger-ui:
+    enabled: true
+    url: /v3/api-docs  # Swagger UI에서 API 문서를 읽을 기본 URL
+    urls:
+      - url: /docs/ba-common-api.json
+        name: common-api
+      - url: /docs/ba-live-api.json
+        name: live-api

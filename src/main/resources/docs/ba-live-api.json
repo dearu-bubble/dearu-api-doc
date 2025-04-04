@@ -1,0 +1,3509 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "라이브톡 API 문서"
+  },
+  "servers": [
+    {
+      "url": ""
+    }
+  ],
+  "security": [
+    {
+      "TOKEN": []
+    }
+  ],
+  "tags": [
+    {
+      "name": "0. Live - Broadcaster용 API"
+    },
+    {
+      "name": "1. Live - Player용 API"
+    },
+    {
+      "name": "6. Live - 공개용 API"
+    },
+    {
+      "name": "99. 미사용"
+    },
+    {
+      "name": "4. Store용 API"
+    },
+    {
+      "name": "2. Chat 관련 API"
+    },
+    {
+      "name": "5. Live - Lambda 서버용 API"
+    },
+    {
+      "name": "3. Like 관련 API"
+    }
+  ],
+  "paths": {
+    "/test": {
+      "post": {
+        "tags": [
+          "99. 미사용"
+        ],
+        "operationId": "code",
+        "responses": {
+          "404": {
+            "description": "Not Found"
+          },
+          "2": {
+            "description": "라이브 종료 사유 코드",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ 라이브톡 종료 사유 코드"
+                }
+              }
+            }
+          },
+          "1": {
+            "description": "공통 코드",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ 공통 코드"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/live/store/{liveID}/item-subtract": {
+      "post": {
+        "tags": [
+          "4. Store용 API"
+        ],
+        "summary": "좋아요 아이템 횟수 차감(사용 처리) API",
+        "description": "라이브톡 아이템 사용 홧수 차감 (유저 권한이 \u0027사용가능\u0027일때만 호출 필요)",
+        "operationId": "setItemSubtract",
+        "parameters": [
+          {
+            "name": "liveID",
+            "in": "path",
+            "description": "라이브톡 식별자",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/StoreLiveItemReqDTO"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "404": {
+            "description": "Not Found"
+          },
+          "200": {
+            "description": "정보 수신 성공",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonResponseStoreLiveItemSubtractResDTO"
+                }
+              }
+            }
+          },
+          "999": {
+            "description": "에러코드 정의",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "아이템 권한 오류": {
+                    "description": "아이템 권한 오류",
+                    "value": 40001
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/live/player/{liveID}/leave": {
+      "post": {
+        "tags": [
+          "1. Live - Player용 API"
+        ],
+        "summary": "라이브톡 퇴장 처리",
+        "description": "라이브톡 나가기 클릭시 호출 (평균 시청 시간 통계를 위한 퇴장 시간 수집용 api)",
+        "operationId": "leaveLive",
+        "parameters": [
+          {
+            "name": "liveID",
+            "in": "path",
+            "description": "live 식별자",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CommonReqDTO"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "404": {
+            "description": "Not Found"
+          },
+          "200": {
+            "description": "퇴장 처리 성공",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonResponsePlayerLiveLeaveResDTO"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/live/player/{liveID}/enter": {
+      "post": {
+        "tags": [
+          "1. Live - Player용 API"
+        ],
+        "summary": "라이브톡 참가",
+        "description": "라이브톡 참가 동의 팝업 확인 클릭시 호출. 라이브톡 참가 시간 저장 및 라이브톡 정보 조회 hash url 제공",
+        "operationId": "setparticipateLive",
+        "parameters": [
+          {
+            "name": "liveID",
+            "in": "path",
+            "description": "live 식별자",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PlayerLiveParticipateReqDTO"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "404": {
+            "description": "Not Found"
+          },
+          "999": {
+            "description": "에러코드 정의",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "조회 가능한 라이브톡 없음": {
+                    "description": "조회 가능한 라이브톡 없음",
+                    "value": 20000
+                  },
+                  "해당 아티스트 버블 구독 안함": {
+                    "description": "해당 아티스트 버블 구독 안함",
+                    "value": 60000
+                  }
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "참가 처리 성공",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonResponsePlayerLiveParticipateResDTO"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/live/like/{liveID}/{likeType}": {
+      "post": {
+        "tags": [
+          "3. Like 관련 API"
+        ],
+        "summary": "좋아요 전송",
+        "description": "무료/유료 좋아요 전송\n- 2000ms(2s) delay 후, 좋아요 카운트 전달 필요\n",
+        "operationId": "setLiveLike",
+        "parameters": [
+          {
+            "name": "liveID",
+            "in": "path",
+            "description": "live 식별자",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "likeType",
+            "in": "path",
+            "description": "좋아요 타입 (0:무료, 1:유료)",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LikeSendRequestDTO"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "404": {
+            "description": "Not Found"
+          },
+          "200": {
+            "description": "정보 수신 성공",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonResponse"
+                }
+              }
+            }
+          },
+          "999": {
+            "description": "에러코드 정의",
+            "content": {
+              "*/*": {
+                "examples": {
+                  "잘못된 LikeType": {
+                    "description": "잘못된 LikeType",
+                    "value": 50002
+                  },
+                  "무료 사용자가 유료 좋아요를 보냄": {
+                    "description": "무료 사용자가 유료 좋아요를 보냄",
+                    "value": 50003
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/live/lambda/{hash}/end": {
+      "post": {
+        "tags": [
+          "5. Live - Lambda 서버용 API"
+        ],
+        "summary": "라이브톡 종료",
+        "description": "라이브톡 종료 (서버간 호출 용)",
+        "operationId": "closeLive",
+        "parameters": [
+          {
+            "name": "hash",
+            "in": "path",
+            "description": "Lambda 서버에서 health check 진행 중 종료 조건을 만족하여 라이브를 강제 종료시키기 위해 호출",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CommonReqDTO"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "404": {
+            "description": "Not Found"
+          },
+          "999": {
+            "description": "에러코드 정의"
+          },
+          "200": {
+            "description": "정보 수신 성공",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonResponseObject"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/live/chat/{liveID}/report": {
+      "post": {
+        "tags": [
+          "2. Chat 관련 API"
+        ],
+        "summary": "구독자 채팅 신고",
+        "description": "구독자 라이브톡 채팅 신고\n- 아티스트, 매니저 신고 시, 해당 계정 채팅 금지 처리를 위한 유저 개별 topic 전달 \u0026 아티스트 화면 채팅 숨김 처리를 위한 아티스트 개별 topic 전달\n- 라이브톡 신고 제한 횟수 초과 시, 해당 계정 채팅 금지 처리를 위한 유저 개별 topic 전달\n",
+        "operationId": "setMessageReport",
+        "parameters": [
+          {
+            "name": "liveID",
+            "in": "path",
+            "description": "live 식별자",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ChatReportRequestDTO"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "404": {
+            "description": "Not Found"
+          },
+          "200": {
+            "description": "정보 수신 성공",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/live/chat/{liveID}/message": {
+      "post": {
+        "tags": [
+          "2. Chat 관련 API"
+        ],
+        "summary": "구독자 채팅 전송",
+        "description": "구독자 라이브톡 채팅 전송\n- text, emoji 전송 가능\n- chat json string\n\"\n    {\n      \"starUserIdx\" : string,\n      \"ckey\": string,\n      \"sender\": string,\n      \"nickname\": string\n      \"text\": string,\n      \"type\": \"text\",\n      \"language\": string (디바이스 언어셋)\n    }\n\"\n",
+        "operationId": "setMessage",
+        "parameters": [
+          {
+            "name": "liveID",
+            "in": "path",
+            "description": "live 식별자",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ChatSendRequestDTO"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "404": {
+            "description": "Not Found"
+          },
+          "200": {
+            "description": "정보 수신 성공",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/live/broadcaster": {
+      "get": {
+        "tags": [
+          "0. Live - Broadcaster용 API"
+        ],
+        "summary": "진행 중인 라이브톡 정보 조회",
+        "description": "라이브톡 정보 조회 (liveID를 명확히 모르는 상태에서 라이브톡 정보를 조회하기 위한 API. certikey 값을 기반으로 진행중인 라이브톡 정보를 조회할 수 있도록 함. 필요없다면 호출하지 않아도 무방함.)",
+        "operationId": "getLiveInfoFromCertikey",
+        "parameters": [
+          {
+            "name": "deviceKey",
+            "in": "query",
+            "description": "기기(스마트폰) 식별자",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "기기(스마트폰) 식별자"
+            }
+          },
+          {
+            "name": "version",
+            "in": "query",
+            "description": "앱 버전",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "앱 버전"
+            }
+          },
+          {
+            "name": "language",
+            "in": "query",
+            "description": "언어",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "언어"
+            }
+          },
+          {
+            "name": "locale",
+            "in": "query",
+            "description": "지역",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "지역"
+            }
+          },
+          {
+            "name": "osType",
+            "in": "query",
+            "description": "OS종류 (‘0’: android, ‘1’: ios)",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "OS종류 (‘0’: android, ‘1’: ios)"
+            }
+          },
+          {
+            "name": "appGroup",
+            "in": "query",
+            "description": "서비스 그룹",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "서비스 그룹"
+            }
+          },
+          {
+            "name": "appMarket",
+            "in": "query",
+            "description": "앱 마켓",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "description": "앱 마켓"
+            }
+          },
+          {
+            "name": "appRegion",
+            "in": "query",
+            "description": "앱 지역",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "description": "앱 지역"
+            }
+          }
+        ],
+        "responses": {
+          "404": {
+            "description": "Not Found"
+          },
+          "200": {
+            "description": "정보 수신 성공",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonResponseBCLiveResDTO"
+                }
+              }
+            }
+          },
+          "999": {
+            "description": "에러코드 정의",
+            "content": {
+              "*/*": {
+                "examples": {
+                  "조회 가능한 라이브톡 없음": {
+                    "description": "조회 가능한 라이브톡 없음",
+                    "value": 20000
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "0. Live - Broadcaster용 API"
+        ],
+        "summary": "라이브톡 대기화면 진입",
+        "description": "라이브톡 진행 동의 팝업에서 확인 버튼 터치 시 호출 (채널 생성, 스트림 시작 전 대기화면 진입(certiKey에서 staruseridx 참조))",
+        "operationId": "createLive",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BCCreateChannelReqDTO"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "404": {
+            "description": "Not Found"
+          },
+          "200": {
+            "description": "정보 수신 성공",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonResponseBCLiveResDTO"
+                }
+              }
+            }
+          },
+          "999": {
+            "description": "에러코드 정의",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "15세 미만 방송불가": {
+                    "description": "15세 미만 방송불가",
+                    "value": 20002
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/live/broadcaster/{liveID}/start": {
+      "post": {
+        "tags": [
+          "0. Live - Broadcaster용 API"
+        ],
+        "summary": "라이브톡 스트리밍 시작",
+        "description": "라이브톡 대기화면에서 라이브톡 시작하기 버튼 터치 시 호출 (라이브톡 스트리밍 시작, status play 처리, 방송 시작 시간 저장)",
+        "operationId": "startLive",
+        "parameters": [
+          {
+            "name": "liveID",
+            "in": "path",
+            "description": "live 식별자",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CommonReqDTO"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "404": {
+            "description": "Not Found"
+          },
+          "200": {
+            "description": "정보 수신 성공",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonResponseBCLiveResDTO"
+                }
+              }
+            }
+          },
+          "999": {
+            "description": "에러코드 정의",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "15세 미만 방송불가": {
+                    "description": "15세 미만 방송불가",
+                    "value": 20002
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/live/broadcaster/{liveID}/settings": {
+      "post": {
+        "tags": [
+          "0. Live - Broadcaster용 API"
+        ],
+        "summary": "라이브톡 설정 변경",
+        "description": "라이브톡 설정 변경 시 호출 (라이브톡 설정 변경 및 저장)",
+        "operationId": "changeLiveSettings",
+        "parameters": [
+          {
+            "name": "liveID",
+            "in": "path",
+            "description": "live 식별자",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BCLiveSettingsReqDTO"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "404": {
+            "description": "Not Found"
+          },
+          "200": {
+            "description": "정보 수신 성공",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/live/broadcaster/{liveID}/restart": {
+      "post": {
+        "tags": [
+          "0. Live - Broadcaster용 API"
+        ],
+        "summary": "라이브톡 스트리밍 재시작",
+        "description": "라이브톡 이탈 재진입 후 대기화면에서 라이브톡 시작하기 버튼 터치 시 호출( 라이브톡 스트리밍 재시작, status play 처리)",
+        "operationId": "restartLive",
+        "parameters": [
+          {
+            "name": "liveID",
+            "in": "path",
+            "description": "live 식별자",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CommonReqDTO"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "404": {
+            "description": "Not Found"
+          },
+          "200": {
+            "description": "정보 수신 성공",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonResponse"
+                }
+              }
+            }
+          },
+          "999": {
+            "description": "에러코드 정의",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "15세 미만 방송불가": {
+                    "description": "15세 미만 방송불가",
+                    "value": 20002
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/live/broadcaster/{liveID}/reready": {
+      "post": {
+        "tags": [
+          "0. Live - Broadcaster용 API"
+        ],
+        "summary": "라이브톡 대기화면 재진입",
+        "description": "이탈 후 라이브톡 재진입 팝업에서 확인 버튼 터치 시 호출 (방송 중이던 채널 이용, 스트림 재시작 전 대기화면 진입)",
+        "operationId": "rereadyLive",
+        "parameters": [
+          {
+            "name": "liveID",
+            "in": "path",
+            "description": "live 식별자",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CommonReqDTO"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "404": {
+            "description": "Not Found"
+          },
+          "200": {
+            "description": "정보 수신 성공",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonResponseBCLiveResDTO"
+                }
+              }
+            }
+          },
+          "999": {
+            "description": "에러코드 정의",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "15세 미만 방송불가": {
+                    "description": "15세 미만 방송불가",
+                    "value": 20002
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/live/broadcaster/{liveID}/end": {
+      "post": {
+        "tags": [
+          "0. Live - Broadcaster용 API"
+        ],
+        "summary": "라이브톡 종료",
+        "description": "라이브톡 종료 팝업에서 확인 버튼 터치 또는 매니저 강제종료 시 호출",
+        "operationId": "closeLive_1",
+        "parameters": [
+          {
+            "name": "liveID",
+            "in": "path",
+            "description": "라이브톡 식별자",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CommonReqDTO"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "404": {
+            "description": "Not Found"
+          },
+          "200": {
+            "description": "정보 수신 성공",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/live/store/{liveID}/item-list": {
+      "get": {
+        "tags": [
+          "4. Store용 API"
+        ],
+        "summary": "라이브톡 아이템 상품 리스트 및 보유 코인 조회",
+        "description": "라이브톡 내에서 라이브톡 아이템 상품 리스트 및 보유 코인 조회",
+        "operationId": "getItemList",
+        "parameters": [
+          {
+            "name": "liveID",
+            "in": "path",
+            "description": "라이브톡 식별자",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "starUserIdx",
+            "in": "query",
+            "description": "아티스트 식별자",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "아티스트 식별자"
+            }
+          },
+          {
+            "name": "appMarket",
+            "in": "query",
+            "description": "앱 마켓",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "description": "앱 마켓"
+            }
+          },
+          {
+            "name": "appRegion",
+            "in": "query",
+            "description": "앱 지역",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "description": "앱 지역"
+            }
+          },
+          {
+            "name": "deviceKey",
+            "in": "query",
+            "description": "기기(스마트폰) 식별자",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "기기(스마트폰) 식별자"
+            }
+          },
+          {
+            "name": "version",
+            "in": "query",
+            "description": "앱 버전",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "앱 버전"
+            }
+          },
+          {
+            "name": "language",
+            "in": "query",
+            "description": "언어",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "언어"
+            }
+          },
+          {
+            "name": "locale",
+            "in": "query",
+            "description": "지역",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "지역"
+            }
+          },
+          {
+            "name": "osType",
+            "in": "query",
+            "description": "OS종류 (‘0’: android, ‘1’: ios)",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "OS종류 (‘0’: android, ‘1’: ios)"
+            }
+          },
+          {
+            "name": "appGroup",
+            "in": "query",
+            "description": "서비스 그룹",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "서비스 그룹"
+            }
+          }
+        ],
+        "responses": {
+          "404": {
+            "description": "Not Found"
+          },
+          "200": {
+            "description": "정보 수신 성공",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonResponseStoreLiveItemListResDTO"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/live/store/{liveID}/item-authority": {
+      "get": {
+        "tags": [
+          "4. Store용 API"
+        ],
+        "summary": "라이브톡 아이템 사용 권한 조회",
+        "description": "라이브톡 아이템 사용을 위한 권한 정보 요청",
+        "operationId": "getItemAuthority",
+        "parameters": [
+          {
+            "name": "liveID",
+            "in": "path",
+            "description": "라이브톡 식별자",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "starUserIdx",
+            "in": "query",
+            "description": "아티스트 식별자",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "아티스트 식별자"
+            }
+          },
+          {
+            "name": "appMarket",
+            "in": "query",
+            "description": "앱 마켓",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "description": "앱 마켓"
+            }
+          },
+          {
+            "name": "appRegion",
+            "in": "query",
+            "description": "앱 지역",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "description": "앱 지역"
+            }
+          },
+          {
+            "name": "deviceKey",
+            "in": "query",
+            "description": "기기(스마트폰) 식별자",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "기기(스마트폰) 식별자"
+            }
+          },
+          {
+            "name": "version",
+            "in": "query",
+            "description": "앱 버전",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "앱 버전"
+            }
+          },
+          {
+            "name": "language",
+            "in": "query",
+            "description": "언어",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "언어"
+            }
+          },
+          {
+            "name": "locale",
+            "in": "query",
+            "description": "지역",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "지역"
+            }
+          },
+          {
+            "name": "osType",
+            "in": "query",
+            "description": "OS종류 (‘0’: android, ‘1’: ios)",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "OS종류 (‘0’: android, ‘1’: ios)"
+            }
+          },
+          {
+            "name": "appGroup",
+            "in": "query",
+            "description": "서비스 그룹",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "서비스 그룹"
+            }
+          }
+        ],
+        "responses": {
+          "404": {
+            "description": "Not Found"
+          },
+          "200": {
+            "description": "정보 수신 성공",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonResponseStoreLiveItemAuthorityResDTO"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/live/store/{liveID}/coin-list": {
+      "get": {
+        "tags": [
+          "4. Store용 API"
+        ],
+        "summary": "코인 상품 리스트 조회",
+        "description": "라이브톡 서비스 내에서 구매가능한 코인 상품 리스트 요청",
+        "operationId": "getCoinList",
+        "parameters": [
+          {
+            "name": "liveID",
+            "in": "path",
+            "description": "라이브톡 식별자",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "deviceKey",
+            "in": "query",
+            "description": "기기(스마트폰) 식별자",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "기기(스마트폰) 식별자"
+            }
+          },
+          {
+            "name": "version",
+            "in": "query",
+            "description": "앱 버전",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "앱 버전"
+            }
+          },
+          {
+            "name": "language",
+            "in": "query",
+            "description": "언어",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "언어"
+            }
+          },
+          {
+            "name": "locale",
+            "in": "query",
+            "description": "지역",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "지역"
+            }
+          },
+          {
+            "name": "osType",
+            "in": "query",
+            "description": "OS종류 (‘0’: android, ‘1’: ios)",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "OS종류 (‘0’: android, ‘1’: ios)"
+            }
+          },
+          {
+            "name": "appGroup",
+            "in": "query",
+            "description": "서비스 그룹",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "서비스 그룹"
+            }
+          },
+          {
+            "name": "appMarket",
+            "in": "query",
+            "description": "앱 마켓",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "description": "앱 마켓"
+            }
+          },
+          {
+            "name": "appRegion",
+            "in": "query",
+            "description": "앱 지역",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "description": "앱 지역"
+            }
+          }
+        ],
+        "responses": {
+          "404": {
+            "description": "Not Found"
+          },
+          "200": {
+            "description": "정보 수신 성공",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonResponseStoreLiveCoinListResDTO"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/live/playing/{hash}": {
+      "get": {
+        "tags": [
+          "6. Live - 공개용 API"
+        ],
+        "summary": "진행 중인 라이브톡 목록 조회",
+        "description": "진행 중인 라이브톡 목록 조회 (웹캐시 적용)",
+        "operationId": "getPlayingLiveList",
+        "parameters": [
+          {
+            "name": "X-API-KEY",
+            "in": "header",
+            "description": "로그인시 내려준 X-API-KEY값(웹캐시 보안용)",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "hash",
+            "in": "path",
+            "description": "친구 목록 api에서 받은 hashUrl 정보를 통한 방송 진행 중인 라이브 목록 조회",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "404": {
+            "description": "Not Found"
+          },
+          "200": {
+            "description": "정보 수신 성공",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonResponseListPlayingLiveDTO"
+                }
+              }
+            }
+          },
+          "999": {
+            "description": "에러코드 정의",
+            "content": {
+              "*/*": {
+                "examples": {
+                  "hash 기간 만료": {
+                    "description": "hash 기간 만료",
+                    "value": 20005
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/live/player/{liveID}/replay/hash": {
+      "get": {
+        "tags": [
+          "1. Live - Player용 API"
+        ],
+        "summary": "버블 라이브 다시보기 hashUrl 조회",
+        "description": "버블 라이브 다시보기 hashUrl 조회용 API",
+        "operationId": "getLiveReplayHash",
+        "parameters": [
+          {
+            "name": "liveID",
+            "in": "path",
+            "description": "live 식별자",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "deviceKey",
+            "in": "query",
+            "description": "기기(스마트폰) 식별자",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "기기(스마트폰) 식별자"
+            }
+          },
+          {
+            "name": "version",
+            "in": "query",
+            "description": "앱 버전",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "앱 버전"
+            }
+          },
+          {
+            "name": "language",
+            "in": "query",
+            "description": "언어",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "언어"
+            }
+          },
+          {
+            "name": "locale",
+            "in": "query",
+            "description": "지역",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "지역"
+            }
+          },
+          {
+            "name": "osType",
+            "in": "query",
+            "description": "OS종류 (‘0’: android, ‘1’: ios)",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "OS종류 (‘0’: android, ‘1’: ios)"
+            }
+          },
+          {
+            "name": "appGroup",
+            "in": "query",
+            "description": "서비스 그룹",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "서비스 그룹"
+            }
+          },
+          {
+            "name": "appMarket",
+            "in": "query",
+            "description": "앱 마켓",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "description": "앱 마켓"
+            }
+          },
+          {
+            "name": "appRegion",
+            "in": "query",
+            "description": "앱 지역",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "description": "앱 지역"
+            }
+          }
+        ],
+        "responses": {
+          "404": {
+            "description": "Not Found"
+          },
+          "200": {
+            "description": "정보 수신 성공",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonResponsePlayerLiveReplayHashResDTO"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/live/player/{liveID}/hash": {
+      "get": {
+        "tags": [
+          "1. Live - Player용 API"
+        ],
+        "summary": "라이브톡 정보 hashUrl 조회",
+        "description": "라이브톡 정보 url 조회용 API. hash url 만료시 다시 조회해야할 경우 호출",
+        "operationId": "getLiveInfoHash",
+        "parameters": [
+          {
+            "name": "liveID",
+            "in": "path",
+            "description": "live 식별자",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "deviceKey",
+            "in": "query",
+            "description": "기기(스마트폰) 식별자",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "기기(스마트폰) 식별자"
+            }
+          },
+          {
+            "name": "version",
+            "in": "query",
+            "description": "앱 버전",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "앱 버전"
+            }
+          },
+          {
+            "name": "language",
+            "in": "query",
+            "description": "언어",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "언어"
+            }
+          },
+          {
+            "name": "locale",
+            "in": "query",
+            "description": "지역",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "지역"
+            }
+          },
+          {
+            "name": "osType",
+            "in": "query",
+            "description": "OS종류 (‘0’: android, ‘1’: ios)",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "OS종류 (‘0’: android, ‘1’: ios)"
+            }
+          },
+          {
+            "name": "appGroup",
+            "in": "query",
+            "description": "서비스 그룹",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "서비스 그룹"
+            }
+          },
+          {
+            "name": "appMarket",
+            "in": "query",
+            "description": "앱 마켓",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "description": "앱 마켓"
+            }
+          },
+          {
+            "name": "appRegion",
+            "in": "query",
+            "description": "앱 지역",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "description": "앱 지역"
+            }
+          }
+        ],
+        "responses": {
+          "404": {
+            "description": "Not Found"
+          },
+          "200": {
+            "description": "정보 수신 성공",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonResponsePlayerLiveParticipateResDTO"
+                }
+              }
+            }
+          },
+          "999": {
+            "description": "에러코드 정의",
+            "content": {
+              "*/*": {
+                "examples": {
+                  "해당 아티스트 버블 구독 안함": {
+                    "description": "해당 아티스트 버블 구독 안함",
+                    "value": 60000
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/live/player/replay/{hash}": {
+      "get": {
+        "tags": [
+          "1. Live - Player용 API"
+        ],
+        "summary": "버블 라이브 다시보기 url 조회",
+        "description": "버블 라이브 다시보기 url 조회용 API (웹캐시 적용)",
+        "operationId": "getLiveReplayUrl",
+        "parameters": [
+          {
+            "name": "X-API-KEY",
+            "in": "header",
+            "description": "로그인시 내려준 X-API-KEY값(웹캐시 보안용)",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "hash",
+            "in": "path",
+            "description": "버블 라이브 다시보기 url 조회용 hashUrl",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "404": {
+            "description": "Not Found"
+          },
+          "200": {
+            "description": "정보 수신 성공",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonResponsePlayerLiveReplayUrlResDTO"
+                }
+              }
+            }
+          },
+          "999": {
+            "description": "에러코드 정의",
+            "content": {
+              "*/*": {
+                "examples": {
+                  "다시보기 url 조회용 hash 기간 만료 코드": {
+                    "description": "다시보기 url 조회용 hash 기간 만료 코드",
+                    "value": 20006
+                  },
+                  "다시보기 재생 가능 시간 만료 코드": {
+                    "description": "다시보기 재생 가능 시간 만료 코드",
+                    "value": 20007
+                  },
+                  "트랜스코딩 미완료": {
+                    "description": "트랜스코딩 미완료",
+                    "value": 20008
+                  },
+                  "다시보기 미제공": {
+                    "description": "다시보기 미제공",
+                    "value": 20009
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/live/player/info/{hash}": {
+      "get": {
+        "tags": [
+          "1. Live - Player용 API"
+        ],
+        "summary": "라이브톡 정보 조회",
+        "description": "라이브톡 정보 조회 (웹캐시 적용)",
+        "operationId": "getLiveInfo",
+        "parameters": [
+          {
+            "name": "X-API-KEY",
+            "in": "header",
+            "description": "로그인시 내려준 X-API-KEY값(웹캐시 보안용)",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "hash",
+            "in": "path",
+            "description": "라이브 참가 요청 후 받은 hashUrl 정보를 통한 라이브 정보 조회",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "404": {
+            "description": "Not Found"
+          },
+          "200": {
+            "description": "정보 수신 성공",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonResponsePlayerLiveInfoResDTO"
+                }
+              }
+            }
+          },
+          "999": {
+            "description": "에러코드 정의",
+            "content": {
+              "*/*": {
+                "examples": {
+                  "hash 기간 만료": {
+                    "description": "hash 기간 만료",
+                    "value": 20005
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/live/broadcaster/{liveID}": {
+      "get": {
+        "tags": [
+          "0. Live - Broadcaster용 API"
+        ],
+        "summary": "진행 중인 라이브톡 정보 조회",
+        "description": "라이브톡 정보 조회 (liveID를 명확히 알고 있는 상태에서 라이브톡 정보를 조회하고자 할때 호출)",
+        "operationId": "getLiveInfo_1",
+        "parameters": [
+          {
+            "name": "liveID",
+            "in": "path",
+            "description": "live 식별자",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "deviceKey",
+            "in": "query",
+            "description": "기기(스마트폰) 식별자",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "기기(스마트폰) 식별자"
+            }
+          },
+          {
+            "name": "version",
+            "in": "query",
+            "description": "앱 버전",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "앱 버전"
+            }
+          },
+          {
+            "name": "language",
+            "in": "query",
+            "description": "언어",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "언어"
+            }
+          },
+          {
+            "name": "locale",
+            "in": "query",
+            "description": "지역",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "지역"
+            }
+          },
+          {
+            "name": "osType",
+            "in": "query",
+            "description": "OS종류 (‘0’: android, ‘1’: ios)",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "OS종류 (‘0’: android, ‘1’: ios)"
+            }
+          },
+          {
+            "name": "appGroup",
+            "in": "query",
+            "description": "서비스 그룹",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "서비스 그룹"
+            }
+          },
+          {
+            "name": "appMarket",
+            "in": "query",
+            "description": "앱 마켓",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "description": "앱 마켓"
+            }
+          },
+          {
+            "name": "appRegion",
+            "in": "query",
+            "description": "앱 지역",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "description": "앱 지역"
+            }
+          }
+        ],
+        "responses": {
+          "404": {
+            "description": "Not Found"
+          },
+          "200": {
+            "description": "정보 수신 성공",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonResponseBCLiveResDTO"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/live/broadcaster/{liveID}/stats": {
+      "get": {
+        "tags": [
+          "0. Live - Broadcaster용 API"
+        ],
+        "summary": "라이브톡 종료 정보 조회",
+        "description": "라이브톡 종료 화면 출력 시 호출 (라이브톡 종료 후 통계 정보 조회)",
+        "operationId": "getLiveStats",
+        "parameters": [
+          {
+            "name": "liveID",
+            "in": "path",
+            "description": "live 식별자",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "deviceKey",
+            "in": "query",
+            "description": "기기(스마트폰) 식별자",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "기기(스마트폰) 식별자"
+            }
+          },
+          {
+            "name": "version",
+            "in": "query",
+            "description": "앱 버전",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "앱 버전"
+            }
+          },
+          {
+            "name": "language",
+            "in": "query",
+            "description": "언어",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "언어"
+            }
+          },
+          {
+            "name": "locale",
+            "in": "query",
+            "description": "지역",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "지역"
+            }
+          },
+          {
+            "name": "osType",
+            "in": "query",
+            "description": "OS종류 (‘0’: android, ‘1’: ios)",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "OS종류 (‘0’: android, ‘1’: ios)"
+            }
+          },
+          {
+            "name": "appGroup",
+            "in": "query",
+            "description": "서비스 그룹",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "서비스 그룹"
+            }
+          },
+          {
+            "name": "appMarket",
+            "in": "query",
+            "description": "앱 마켓",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "description": "앱 마켓"
+            }
+          },
+          {
+            "name": "appRegion",
+            "in": "query",
+            "description": "앱 지역",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "description": "앱 지역"
+            }
+          }
+        ],
+        "responses": {
+          "404": {
+            "description": "Not Found"
+          },
+          "200": {
+            "description": "정보 수신 성공",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonResponseBCLiveStatsResDTO"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/live/broadcaster/endreason-msg/{endReason}": {
+      "get": {
+        "tags": [
+          "0. Live - Broadcaster용 API"
+        ],
+        "summary": "endReason 메시지 조회",
+        "description": "endReason에 따른 메시지 조회",
+        "operationId": "getEndReasonMsg",
+        "parameters": [
+          {
+            "name": "deviceKey",
+            "in": "query",
+            "description": "기기(스마트폰) 식별자",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "기기(스마트폰) 식별자"
+            }
+          },
+          {
+            "name": "version",
+            "in": "query",
+            "description": "앱 버전",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "앱 버전"
+            }
+          },
+          {
+            "name": "language",
+            "in": "query",
+            "description": "언어",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "언어"
+            }
+          },
+          {
+            "name": "locale",
+            "in": "query",
+            "description": "지역",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "지역"
+            }
+          },
+          {
+            "name": "osType",
+            "in": "query",
+            "description": "OS종류 (‘0’: android, ‘1’: ios)",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "OS종류 (‘0’: android, ‘1’: ios)"
+            }
+          },
+          {
+            "name": "appGroup",
+            "in": "query",
+            "description": "서비스 그룹",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "서비스 그룹"
+            }
+          },
+          {
+            "name": "appMarket",
+            "in": "query",
+            "description": "앱 마켓",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "description": "앱 마켓"
+            }
+          },
+          {
+            "name": "appRegion",
+            "in": "query",
+            "description": "앱 지역",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "description": "앱 지역"
+            }
+          },
+          {
+            "name": "endReason",
+            "in": "path",
+            "description": "endReason",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "404": {
+            "description": "Not Found"
+          },
+          "200": {
+            "description": "정보 수신 성공",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonResponseBCGetEndReasonMsgResDTO"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/live/broadcaster/check-teenager": {
+      "get": {
+        "tags": [
+          "0. Live - Broadcaster용 API"
+        ],
+        "summary": "15세 미만 방송가능 여부 조회",
+        "description": "15세미만 제한 화면에서 조건체크 필요할때 호출 (15세 미만이고 22시 경과했는지 여부 조회, Header에서 staruseridx 추출)",
+        "operationId": "checkTeenager",
+        "parameters": [
+          {
+            "name": "deviceKey",
+            "in": "query",
+            "description": "기기(스마트폰) 식별자",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "기기(스마트폰) 식별자"
+            }
+          },
+          {
+            "name": "version",
+            "in": "query",
+            "description": "앱 버전",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "앱 버전"
+            }
+          },
+          {
+            "name": "language",
+            "in": "query",
+            "description": "언어",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "언어"
+            }
+          },
+          {
+            "name": "locale",
+            "in": "query",
+            "description": "지역",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "지역"
+            }
+          },
+          {
+            "name": "osType",
+            "in": "query",
+            "description": "OS종류 (‘0’: android, ‘1’: ios)",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "OS종류 (‘0’: android, ‘1’: ios)"
+            }
+          },
+          {
+            "name": "appGroup",
+            "in": "query",
+            "description": "서비스 그룹",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "서비스 그룹"
+            }
+          },
+          {
+            "name": "appMarket",
+            "in": "query",
+            "description": "앱 마켓",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "description": "앱 마켓"
+            }
+          },
+          {
+            "name": "appRegion",
+            "in": "query",
+            "description": "앱 지역",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "description": "앱 지역"
+            }
+          }
+        ],
+        "responses": {
+          "404": {
+            "description": "Not Found"
+          },
+          "200": {
+            "description": "정보 수신 성공",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommonResponseBCCheckTeenagerResDTO"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/favicon.ico": {
+      "get": {
+        "tags": [
+          "99. 미사용"
+        ],
+        "operationId": "statusOK",
+        "responses": {
+          "404": {
+            "description": "Not Found"
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "boolean"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      " 공통 코드": {
+        "type": "object",
+        "properties": {
+          "SUCCESS_CODE": {
+            "type": "integer",
+            "description": "성공 코드",
+            "format": "int32",
+            "default": 0
+          },
+          "COMMON_ERROR_CODE": {
+            "type": "integer",
+            "description": "서버 오류 코드",
+            "format": "int32",
+            "default": 10000
+          },
+          "COMMON_PARAM_ERROR_CODE": {
+            "type": "integer",
+            "description": "기본 파라미터 오류 코드",
+            "format": "int32",
+            "default": 10004
+          }
+        },
+        "description": "공통 response 코드 정의"
+      },
+      " 라이브톡 종료 사유 코드": {
+        "type": "object",
+        "properties": {
+          "notFinished": {
+            "type": "integer",
+            "description": "종료 안됨",
+            "format": "int32",
+            "default": 0
+          },
+          "artistFinished": {
+            "type": "integer",
+            "description": "아티스트 종료 (default, 정상 종료)",
+            "format": "int32",
+            "default": 1
+          },
+          "artistBreak": {
+            "type": "integer",
+            "description": "아티스트 이탈로 종료",
+            "format": "int32",
+            "default": 2
+          },
+          "managerFinished": {
+            "type": "integer",
+            "description": "매니저 또는 관리자 종료",
+            "format": "int32",
+            "default": 3
+          },
+          "teenagerNotPossible": {
+            "type": "integer",
+            "description": "15세 미만 아티스트 방송 불가 시간",
+            "format": "int32",
+            "default": 4
+          },
+          "broadcasterTimeOut": {
+            "type": "integer",
+            "description": "최대 방송 시간 초과",
+            "format": "int32",
+            "default": 5
+          },
+          "readyTimeOut": {
+            "type": "integer",
+            "description": "Ready 대기 시간 초과(\u003d20초)",
+            "format": "int32",
+            "default": 6
+          }
+        },
+        "description": "라이브톡 종료 사유 코드"
+      },
+      "BCCheckTeenagerResDTO": {
+        "type": "object",
+        "properties": {
+          "passFlag": {
+            "type": "boolean",
+            "description": "방송 가능 여부",
+            "default": true
+          },
+          "youthNoPassMsg": {
+            "type": "string",
+            "description": "방송 불가능일 경우 보여져야 하는 문구"
+          }
+        },
+        "description": "15세 미만 방송가능 여부(브로드캐스터용)"
+      },
+      "BCCreateChannelReqDTO": {
+        "required": [
+          "appGroup",
+          "deviceKey",
+          "language",
+          "locale",
+          "osType",
+          "version"
+        ],
+        "type": "object",
+        "properties": {
+          "deviceKey": {
+            "type": "string",
+            "description": "기기(스마트폰) 식별자"
+          },
+          "version": {
+            "type": "string",
+            "description": "앱 버전"
+          },
+          "language": {
+            "type": "string",
+            "description": "언어"
+          },
+          "locale": {
+            "type": "string",
+            "description": "지역"
+          },
+          "osType": {
+            "type": "string",
+            "description": "OS종류 (‘0’: android, ‘1’: ios)"
+          },
+          "appGroup": {
+            "type": "string",
+            "description": "서비스 그룹"
+          },
+          "appMarket": {
+            "type": "string",
+            "description": "앱 마켓"
+          },
+          "appRegion": {
+            "type": "string",
+            "description": "앱 지역"
+          },
+          "chatFlag": {
+            "type": "boolean",
+            "description": "채팅 on/off",
+            "default": true
+          }
+        },
+        "description": "라이브톡 대기화면 진입 (브로드캐스터용)"
+      },
+      "BCGetEndReasonMsgResDTO": {
+        "type": "object",
+        "properties": {
+          "msg": {
+            "type": "string",
+            "description": "endReason에 따른 메시지"
+          }
+        },
+        "description": "endReason에 따른 메시지(브로드캐스터용)"
+      },
+      "BCLiveResDTO": {
+        "type": "object",
+        "properties": {
+          "starUserIdx": {
+            "type": "string",
+            "description": "스타유저 식별자"
+          },
+          "liveID": {
+            "type": "string",
+            "description": "라이브톡 식별자"
+          },
+          "status": {
+            "type": "string",
+            "description": "라이브톡 상태 코드",
+            "enum": [
+              "PLAY",
+              "READY",
+              "READY_PENDING",
+              "END",
+              "PENDING",
+              "PREPARE"
+            ]
+          },
+          "endReason": {
+            "type": "integer",
+            "description": "방송 종료 사유",
+            "format": "int32"
+          },
+          "liveStartDT": {
+            "type": "string",
+            "description": "라이브톡 시작 시간(시간 포맷 : {yyyyMMddHHmmss})"
+          },
+          "maxStreamingTime": {
+            "type": "integer",
+            "description": "최대 스트리밍 시간(분)",
+            "format": "int32",
+            "default": 240
+          },
+          "streamUrl": {
+            "type": "string",
+            "description": "IVS 스트림 URL"
+          },
+          "streamKey": {
+            "type": "string",
+            "description": "IVS 스트림 Key"
+          },
+          "chatFlag": {
+            "type": "boolean",
+            "description": "채팅 on/off"
+          },
+          "likesPayMultiplePoint": {
+            "type": "integer",
+            "description": "유료 좋아요 점수 배수 (무료 좋아요 점수로 치환)",
+            "format": "int32"
+          },
+          "countLikesFree": {
+            "type": "integer",
+            "description": "무료 좋아요수",
+            "format": "int32"
+          },
+          "countLikesPay": {
+            "type": "integer",
+            "description": "유료 좋아요수",
+            "format": "int32"
+          },
+          "countViewer": {
+            "type": "integer",
+            "description": "시청자수",
+            "format": "int32"
+          },
+          "likeHitList": {
+            "type": "array",
+            "description": "좋아요 이벤트 hit 수치(list)",
+            "items": {
+              "type": "integer",
+              "description": "좋아요 이벤트 hit 수치(list)",
+              "format": "int32"
+            }
+          },
+          "broadcasterPrivateTopic": {
+            "type": "string",
+            "description": "AWS iot core 브로드캐스터 개인 topic"
+          },
+          "hiddenCkeyList": {
+            "type": "array",
+            "description": "숨김 처리 해야 할 ckey list",
+            "items": {
+              "type": "string",
+              "description": "숨김 처리 해야 할 ckey list"
+            }
+          },
+          "traceIdx": {
+            "type": "integer",
+            "description": "status 검증용 traceIdx",
+            "format": "int64",
+            "default": 0
+          }
+        },
+        "description": "라이브톡 정보(브로드캐스터용)"
+      },
+      "BCLiveSettingsReqDTO": {
+        "required": [
+          "appGroup",
+          "deviceKey",
+          "language",
+          "locale",
+          "osType",
+          "version"
+        ],
+        "type": "object",
+        "properties": {
+          "deviceKey": {
+            "type": "string",
+            "description": "기기(스마트폰) 식별자"
+          },
+          "version": {
+            "type": "string",
+            "description": "앱 버전"
+          },
+          "language": {
+            "type": "string",
+            "description": "언어"
+          },
+          "locale": {
+            "type": "string",
+            "description": "지역"
+          },
+          "osType": {
+            "type": "string",
+            "description": "OS종류 (‘0’: android, ‘1’: ios)"
+          },
+          "appGroup": {
+            "type": "string",
+            "description": "서비스 그룹"
+          },
+          "appMarket": {
+            "type": "string",
+            "description": "앱 마켓"
+          },
+          "appRegion": {
+            "type": "string",
+            "description": "앱 지역"
+          },
+          "chatFlag": {
+            "type": "boolean",
+            "description": "채팅 on/off",
+            "default": true
+          }
+        },
+        "description": "설정값"
+      },
+      "BCLiveStatsResDTO": {
+        "type": "object",
+        "properties": {
+          "liveID": {
+            "type": "string",
+            "description": "라이브톡 식별자"
+          },
+          "totalCountViewers": {
+            "type": "integer",
+            "description": "최종 누적 시청자 수",
+            "format": "int32",
+            "default": 0
+          },
+          "totalAvgViewers": {
+            "type": "integer",
+            "description": "평균 시청자 수(집계 중일 때 는 default)",
+            "format": "int32",
+            "default": -1
+          },
+          "totalAvgViewTime": {
+            "type": "integer",
+            "description": "평균 시청 시간(분)(집계 중일 때 는 default)",
+            "format": "int32",
+            "default": -1
+          },
+          "totalCountLikesFree": {
+            "type": "integer",
+            "description": "최종 누적 좋아요(무료)",
+            "format": "int32",
+            "default": 0
+          },
+          "totalCountLikesPay": {
+            "type": "integer",
+            "description": "최종 누적 좋아요(유료)",
+            "format": "int32",
+            "default": 0
+          },
+          "liveStartDT": {
+            "type": "string",
+            "description": "라이브톡 시작 시간(시간 포맷 : {yyyyMMddHHmmss})"
+          },
+          "streamingTime": {
+            "type": "string",
+            "description": "라이브톡 스트리밍 시간(시간 포맷 : {HHmmss})"
+          }
+        },
+        "description": "라이브톡 종료 리포트(브로드캐스터용)"
+      },
+      "ChatReportRequestDTO": {
+        "required": [
+          "appGroup",
+          "deviceKey",
+          "language",
+          "locale",
+          "osType",
+          "version"
+        ],
+        "type": "object",
+        "properties": {
+          "deviceKey": {
+            "type": "string",
+            "description": "기기(스마트폰) 식별자"
+          },
+          "version": {
+            "type": "string",
+            "description": "앱 버전"
+          },
+          "language": {
+            "type": "string",
+            "description": "언어"
+          },
+          "locale": {
+            "type": "string",
+            "description": "지역"
+          },
+          "osType": {
+            "type": "string",
+            "description": "OS종류 (‘0’: android, ‘1’: ios)"
+          },
+          "appGroup": {
+            "type": "string",
+            "description": "서비스 그룹"
+          },
+          "appMarket": {
+            "type": "string",
+            "description": "앱 마켓"
+          },
+          "appRegion": {
+            "type": "string",
+            "description": "앱 지역"
+          },
+          "ckey": {
+            "type": "string",
+            "description": "신고 채팅 ckey"
+          }
+        },
+        "description": "라이브 채팅 신고"
+      },
+      "ChatSendRequestDTO": {
+        "required": [
+          "appGroup",
+          "deviceKey",
+          "language",
+          "locale",
+          "osType",
+          "version"
+        ],
+        "type": "object",
+        "properties": {
+          "deviceKey": {
+            "type": "string",
+            "description": "기기(스마트폰) 식별자"
+          },
+          "version": {
+            "type": "string",
+            "description": "앱 버전"
+          },
+          "language": {
+            "type": "string",
+            "description": "언어"
+          },
+          "locale": {
+            "type": "string",
+            "description": "지역"
+          },
+          "osType": {
+            "type": "string",
+            "description": "OS종류 (‘0’: android, ‘1’: ios)"
+          },
+          "appGroup": {
+            "type": "string",
+            "description": "서비스 그룹"
+          },
+          "appMarket": {
+            "type": "string",
+            "description": "앱 마켓"
+          },
+          "appRegion": {
+            "type": "string",
+            "description": "앱 지역"
+          },
+          "chat": {
+            "type": "string",
+            "description": "라이브 채팅 데이터 (json string)"
+          }
+        },
+        "description": "라이브 채팅 전송"
+      },
+      "CoinListVO": {
+        "type": "object",
+        "properties": {
+          "productID": {
+            "type": "string",
+            "description": "상품 ID (구매 전달용)"
+          },
+          "productName": {
+            "type": "string",
+            "description": "상품 이름 (구매 전달용)"
+          },
+          "coinPoint": {
+            "type": "integer",
+            "description": "코인 포인트",
+            "format": "int32",
+            "default": 0
+          },
+          "price": {
+            "type": "string",
+            "description": "판매 가격"
+          }
+        }
+      },
+      "CommonReqDTO": {
+        "required": [
+          "appGroup",
+          "deviceKey",
+          "language",
+          "locale",
+          "osType",
+          "version"
+        ],
+        "type": "object",
+        "properties": {
+          "deviceKey": {
+            "type": "string",
+            "description": "기기(스마트폰) 식별자"
+          },
+          "version": {
+            "type": "string",
+            "description": "앱 버전"
+          },
+          "language": {
+            "type": "string",
+            "description": "언어"
+          },
+          "locale": {
+            "type": "string",
+            "description": "지역"
+          },
+          "osType": {
+            "type": "string",
+            "description": "OS종류 (‘0’: android, ‘1’: ios)"
+          },
+          "appGroup": {
+            "type": "string",
+            "description": "서비스 그룹"
+          },
+          "appMarket": {
+            "type": "string",
+            "description": "앱 마켓"
+          },
+          "appRegion": {
+            "type": "string",
+            "description": "앱 지역"
+          }
+        },
+        "description": "모든 api 공통 파라미터 객체 (RequestDTO들이 상속 받는 객체)"
+      },
+      "CommonResponse": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "return 코드, 성공일때 0, 실패일때 다른 코드로 내려감",
+            "format": "int32",
+            "default": 0
+          },
+          "data": {
+            "type": "object",
+            "description": "클라이언트에서 필요한 응답 데이터"
+          },
+          "msg": {
+            "type": "string",
+            "description": "클라이언트에서 보여줄 메세지"
+          },
+          "traceId": {
+            "type": "string",
+            "description": "해당 API호출의 고유값"
+          }
+        },
+        "description": "공통 reponse 객체"
+      },
+      "CommonResponseBCCheckTeenagerResDTO": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "return 코드, 성공일때 0, 실패일때 다른 코드로 내려감",
+            "format": "int32",
+            "default": 0
+          },
+          "data": {
+            "$ref": "#/components/schemas/BCCheckTeenagerResDTO"
+          },
+          "msg": {
+            "type": "string",
+            "description": "클라이언트에서 보여줄 메세지"
+          },
+          "traceId": {
+            "type": "string",
+            "description": "해당 API호출의 고유값"
+          }
+        },
+        "description": "공통 reponse 객체"
+      },
+      "CommonResponseBCGetEndReasonMsgResDTO": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "return 코드, 성공일때 0, 실패일때 다른 코드로 내려감",
+            "format": "int32",
+            "default": 0
+          },
+          "data": {
+            "$ref": "#/components/schemas/BCGetEndReasonMsgResDTO"
+          },
+          "msg": {
+            "type": "string",
+            "description": "클라이언트에서 보여줄 메세지"
+          },
+          "traceId": {
+            "type": "string",
+            "description": "해당 API호출의 고유값"
+          }
+        },
+        "description": "공통 reponse 객체"
+      },
+      "CommonResponseBCLiveResDTO": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "return 코드, 성공일때 0, 실패일때 다른 코드로 내려감",
+            "format": "int32",
+            "default": 0
+          },
+          "data": {
+            "$ref": "#/components/schemas/BCLiveResDTO"
+          },
+          "msg": {
+            "type": "string",
+            "description": "클라이언트에서 보여줄 메세지"
+          },
+          "traceId": {
+            "type": "string",
+            "description": "해당 API호출의 고유값"
+          }
+        },
+        "description": "공통 reponse 객체"
+      },
+      "CommonResponseBCLiveStatsResDTO": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "return 코드, 성공일때 0, 실패일때 다른 코드로 내려감",
+            "format": "int32",
+            "default": 0
+          },
+          "data": {
+            "$ref": "#/components/schemas/BCLiveStatsResDTO"
+          },
+          "msg": {
+            "type": "string",
+            "description": "클라이언트에서 보여줄 메세지"
+          },
+          "traceId": {
+            "type": "string",
+            "description": "해당 API호출의 고유값"
+          }
+        },
+        "description": "공통 reponse 객체"
+      },
+      "CommonResponseListPlayingLiveDTO": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "return 코드, 성공일때 0, 실패일때 다른 코드로 내려감",
+            "format": "int32",
+            "default": 0
+          },
+          "data": {
+            "type": "array",
+            "description": "클라이언트에서 필요한 응답 데이터",
+            "items": {
+              "$ref": "#/components/schemas/PlayingLiveDTO"
+            }
+          },
+          "msg": {
+            "type": "string",
+            "description": "클라이언트에서 보여줄 메세지"
+          },
+          "traceId": {
+            "type": "string",
+            "description": "해당 API호출의 고유값"
+          }
+        },
+        "description": "공통 reponse 객체"
+      },
+      "CommonResponseObject": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "return 코드, 성공일때 0, 실패일때 다른 코드로 내려감",
+            "format": "int32",
+            "default": 0
+          },
+          "data": {
+            "type": "object",
+            "description": "클라이언트에서 필요한 응답 데이터"
+          },
+          "msg": {
+            "type": "string",
+            "description": "클라이언트에서 보여줄 메세지"
+          },
+          "traceId": {
+            "type": "string",
+            "description": "해당 API호출의 고유값"
+          }
+        },
+        "description": "공통 reponse 객체"
+      },
+      "CommonResponsePlayerLiveInfoResDTO": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "return 코드, 성공일때 0, 실패일때 다른 코드로 내려감",
+            "format": "int32",
+            "default": 0
+          },
+          "data": {
+            "$ref": "#/components/schemas/PlayerLiveInfoResDTO"
+          },
+          "msg": {
+            "type": "string",
+            "description": "클라이언트에서 보여줄 메세지"
+          },
+          "traceId": {
+            "type": "string",
+            "description": "해당 API호출의 고유값"
+          }
+        },
+        "description": "공통 reponse 객체"
+      },
+      "CommonResponsePlayerLiveLeaveResDTO": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "return 코드, 성공일때 0, 실패일때 다른 코드로 내려감",
+            "format": "int32",
+            "default": 0
+          },
+          "data": {
+            "$ref": "#/components/schemas/PlayerLiveLeaveResDTO"
+          },
+          "msg": {
+            "type": "string",
+            "description": "클라이언트에서 보여줄 메세지"
+          },
+          "traceId": {
+            "type": "string",
+            "description": "해당 API호출의 고유값"
+          }
+        },
+        "description": "공통 reponse 객체"
+      },
+      "CommonResponsePlayerLiveParticipateResDTO": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "return 코드, 성공일때 0, 실패일때 다른 코드로 내려감",
+            "format": "int32",
+            "default": 0
+          },
+          "data": {
+            "$ref": "#/components/schemas/PlayerLiveParticipateResDTO"
+          },
+          "msg": {
+            "type": "string",
+            "description": "클라이언트에서 보여줄 메세지"
+          },
+          "traceId": {
+            "type": "string",
+            "description": "해당 API호출의 고유값"
+          }
+        },
+        "description": "공통 reponse 객체"
+      },
+      "CommonResponsePlayerLiveReplayHashResDTO": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "return 코드, 성공일때 0, 실패일때 다른 코드로 내려감",
+            "format": "int32",
+            "default": 0
+          },
+          "data": {
+            "$ref": "#/components/schemas/PlayerLiveReplayHashResDTO"
+          },
+          "msg": {
+            "type": "string",
+            "description": "클라이언트에서 보여줄 메세지"
+          },
+          "traceId": {
+            "type": "string",
+            "description": "해당 API호출의 고유값"
+          }
+        },
+        "description": "공통 reponse 객체"
+      },
+      "CommonResponsePlayerLiveReplayUrlResDTO": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "return 코드, 성공일때 0, 실패일때 다른 코드로 내려감",
+            "format": "int32",
+            "default": 0
+          },
+          "data": {
+            "$ref": "#/components/schemas/PlayerLiveReplayUrlResDTO"
+          },
+          "msg": {
+            "type": "string",
+            "description": "클라이언트에서 보여줄 메세지"
+          },
+          "traceId": {
+            "type": "string",
+            "description": "해당 API호출의 고유값"
+          }
+        },
+        "description": "공통 reponse 객체"
+      },
+      "CommonResponseStoreLiveCoinListResDTO": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "return 코드, 성공일때 0, 실패일때 다른 코드로 내려감",
+            "format": "int32",
+            "default": 0
+          },
+          "data": {
+            "$ref": "#/components/schemas/StoreLiveCoinListResDTO"
+          },
+          "msg": {
+            "type": "string",
+            "description": "클라이언트에서 보여줄 메세지"
+          },
+          "traceId": {
+            "type": "string",
+            "description": "해당 API호출의 고유값"
+          }
+        },
+        "description": "공통 reponse 객체"
+      },
+      "CommonResponseStoreLiveItemAuthorityResDTO": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "return 코드, 성공일때 0, 실패일때 다른 코드로 내려감",
+            "format": "int32",
+            "default": 0
+          },
+          "data": {
+            "$ref": "#/components/schemas/StoreLiveItemAuthorityResDTO"
+          },
+          "msg": {
+            "type": "string",
+            "description": "클라이언트에서 보여줄 메세지"
+          },
+          "traceId": {
+            "type": "string",
+            "description": "해당 API호출의 고유값"
+          }
+        },
+        "description": "공통 reponse 객체"
+      },
+      "CommonResponseStoreLiveItemListResDTO": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "return 코드, 성공일때 0, 실패일때 다른 코드로 내려감",
+            "format": "int32",
+            "default": 0
+          },
+          "data": {
+            "$ref": "#/components/schemas/StoreLiveItemListResDTO"
+          },
+          "msg": {
+            "type": "string",
+            "description": "클라이언트에서 보여줄 메세지"
+          },
+          "traceId": {
+            "type": "string",
+            "description": "해당 API호출의 고유값"
+          }
+        },
+        "description": "공통 reponse 객체"
+      },
+      "CommonResponseStoreLiveItemSubtractResDTO": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "return 코드, 성공일때 0, 실패일때 다른 코드로 내려감",
+            "format": "int32",
+            "default": 0
+          },
+          "data": {
+            "$ref": "#/components/schemas/StoreLiveItemSubtractResDTO"
+          },
+          "msg": {
+            "type": "string",
+            "description": "클라이언트에서 보여줄 메세지"
+          },
+          "traceId": {
+            "type": "string",
+            "description": "해당 API호출의 고유값"
+          }
+        },
+        "description": "공통 reponse 객체"
+      },
+      "ItemListVO": {
+        "type": "object",
+        "properties": {
+          "productID": {
+            "type": "string",
+            "description": "상품 ID (구매 전달용)"
+          },
+          "optionID": {
+            "type": "string",
+            "description": "옵션 ID (구매 전달용)"
+          },
+          "optionName": {
+            "type": "string",
+            "description": "옵션 이름 ( 예: \u00275회권\u0027)"
+          },
+          "salePrice": {
+            "type": "integer",
+            "description": "가격",
+            "format": "int32",
+            "default": 0
+          }
+        }
+      },
+      "LikeSendRequestDTO": {
+        "required": [
+          "appGroup",
+          "deviceKey",
+          "language",
+          "locale",
+          "osType",
+          "version"
+        ],
+        "type": "object",
+        "properties": {
+          "deviceKey": {
+            "type": "string",
+            "description": "기기(스마트폰) 식별자"
+          },
+          "version": {
+            "type": "string",
+            "description": "앱 버전"
+          },
+          "language": {
+            "type": "string",
+            "description": "언어"
+          },
+          "locale": {
+            "type": "string",
+            "description": "지역"
+          },
+          "osType": {
+            "type": "string",
+            "description": "OS종류 (‘0’: android, ‘1’: ios)"
+          },
+          "appGroup": {
+            "type": "string",
+            "description": "서비스 그룹"
+          },
+          "appMarket": {
+            "type": "string",
+            "description": "앱 마켓"
+          },
+          "appRegion": {
+            "type": "string",
+            "description": "앱 지역"
+          },
+          "likeCnt": {
+            "type": "integer",
+            "description": "라이브 좋아요 카운트 (유료 좋아요인 경우, N% 비중 제외 순수 카운트 전달)",
+            "format": "int32"
+          },
+          "failCnt": {
+            "type": "integer",
+            "description": "좋아요 api 실패 횟수 (좋아요 api 실패 된 경우, 실패 횟수 +1)",
+            "format": "int32"
+          }
+        },
+        "description": "라이브 좋아요 전송"
+      },
+      "PlayerLiveInfoResDTO": {
+        "type": "object",
+        "properties": {
+          "liveID": {
+            "type": "string",
+            "description": "라이브콜 식별자"
+          },
+          "starUserIdx": {
+            "type": "string",
+            "description": "브로드캐스터 식별자"
+          },
+          "status": {
+            "type": "string",
+            "description": "라이브톡 상태 코드",
+            "enum": [
+              "PLAY",
+              "READY",
+              "READY_PENDING",
+              "END",
+              "PENDING",
+              "PREPARE"
+            ]
+          },
+          "endReason": {
+            "type": "integer",
+            "description": "방송 종료 사유",
+            "format": "int32"
+          },
+          "liveStartDT": {
+            "type": "string",
+            "description": "라이브콜 시작 시간(시간 포맷 : {yyyyMMddHHmmss})"
+          },
+          "maxStreamingTime": {
+            "type": "integer",
+            "description": "최대 스트리밍 시간(분)",
+            "format": "int32",
+            "default": 240
+          },
+          "playbackUrl": {
+            "type": "string",
+            "description": "IVS 재생 URL"
+          },
+          "chatFlag": {
+            "type": "boolean",
+            "description": "채팅 on/off"
+          },
+          "likeHitList": {
+            "type": "array",
+            "description": "좋아요 이벤트 hit 수치(list)",
+            "items": {
+              "type": "integer",
+              "description": "좋아요 이벤트 hit 수치(list)",
+              "format": "int32"
+            }
+          },
+          "countLikesFree": {
+            "type": "integer",
+            "description": "무료 좋아요수",
+            "format": "int32"
+          },
+          "likesPayMultiplePoint": {
+            "type": "integer",
+            "description": "유료 좋아요 점수 배수 (무료 좋아요 점수로 치환)",
+            "format": "int32"
+          },
+          "countLikesPay": {
+            "type": "integer",
+            "description": "유료 좋아요수",
+            "format": "int32"
+          },
+          "countViewer": {
+            "type": "integer",
+            "description": "시청자수",
+            "format": "int32"
+          },
+          "playerCommonTopic": {
+            "type": "string",
+            "description": "AWS iot core 공통 topic"
+          },
+          "chatBanUserList": {
+            "type": "array",
+            "description": "채팅 금지 유저 목록",
+            "items": {
+              "type": "string",
+              "description": "채팅 금지 유저 목록"
+            }
+          },
+          "liveBanUserList": {
+            "type": "array",
+            "description": "라이브콜 금지 유저 목록",
+            "items": {
+              "type": "string",
+              "description": "라이브콜 금지 유저 목록"
+            }
+          },
+          "managerList": {
+            "type": "array",
+            "description": "운영자 목록",
+            "items": {
+              "type": "string",
+              "description": "운영자 목록"
+            }
+          },
+          "liveNickNameBanList": {
+            "type": "array",
+            "description": "라이브콜 닉네임 금칙어 목록",
+            "items": {
+              "type": "string",
+              "description": "라이브콜 닉네임 금칙어 목록"
+            }
+          },
+          "traceIdx": {
+            "type": "integer",
+            "description": "status 검증용 traceIdx",
+            "format": "int64",
+            "default": 0
+          }
+        },
+        "description": "라이브콜 정보(구독자용)"
+      },
+      "PlayerLiveLeaveResDTO": {
+        "type": "object",
+        "properties": {
+          "leaveFlag": {
+            "type": "boolean",
+            "description": "라이브톡 퇴장 결과",
+            "default": true
+          }
+        },
+        "description": "라이브톡 퇴장(구독자용)"
+      },
+      "PlayerLiveParticipateReqDTO": {
+        "required": [
+          "appGroup",
+          "deviceKey",
+          "language",
+          "locale",
+          "osType",
+          "version"
+        ],
+        "type": "object",
+        "properties": {
+          "deviceKey": {
+            "type": "string",
+            "description": "기기(스마트폰) 식별자"
+          },
+          "version": {
+            "type": "string",
+            "description": "앱 버전"
+          },
+          "language": {
+            "type": "string",
+            "description": "언어"
+          },
+          "locale": {
+            "type": "string",
+            "description": "지역"
+          },
+          "osType": {
+            "type": "string",
+            "description": "OS종류 (‘0’: android, ‘1’: ios)"
+          },
+          "appGroup": {
+            "type": "string",
+            "description": "서비스 그룹"
+          },
+          "appMarket": {
+            "type": "string",
+            "description": "앱 마켓"
+          },
+          "appRegion": {
+            "type": "string",
+            "description": "앱 지역"
+          },
+          "joinAgreeFlag": {
+            "type": "boolean",
+            "description": "라이브톡 참여 약관 동의 여부",
+            "default": false
+          }
+        },
+        "description": "라이브톡 참여(구독자용) 요청"
+      },
+      "PlayerLiveParticipateResDTO": {
+        "type": "object",
+        "properties": {
+          "hashUrl": {
+            "type": "string",
+            "description": "라이브톡 정보(구독자용) 조회용 api url"
+          },
+          "playerPrivateTopic": {
+            "type": "string",
+            "description": "AWS iot core 개인 topic"
+          }
+        },
+        "description": "라이브톡 참여(구독자용) 반환"
+      },
+      "PlayerLiveReplayHashResDTO": {
+        "type": "object",
+        "properties": {
+          "hashUrl": {
+            "type": "string",
+            "description": "라이브톡 다시보기 URL 조회용 api url"
+          }
+        },
+        "description": "라이브톡 다시보기 URL 조회용 api url 반환"
+      },
+      "PlayerLiveReplayUrlResDTO": {
+        "type": "object",
+        "properties": {
+          "replayUrl": {
+            "type": "string",
+            "description": "라이브톡 다시보기 url"
+          }
+        },
+        "description": "라이브톡 다시보기 url 반환"
+      },
+      "PlayingLiveDTO": {
+        "type": "object",
+        "properties": {
+          "liveID": {
+            "type": "string",
+            "description": "라이브 식별자"
+          },
+          "starUserIdx": {
+            "type": "string",
+            "description": "브로드캐스터 식별자"
+          },
+          "nickname": {
+            "type": "string",
+            "description": "브로드캐스터 상품 내 닉네임"
+          }
+        },
+        "description": "진행 중인 라이브 정보"
+      },
+      "StoreLiveCoinListResDTO": {
+        "type": "object",
+        "properties": {
+          "monetaryUnit": {
+            "type": "string"
+          },
+          "coinList": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CoinListVO"
+            }
+          }
+        },
+        "description": "코인 상품 리스트"
+      },
+      "StoreLiveItemAuthorityResDTO": {
+        "type": "object",
+        "properties": {
+          "authority": {
+            "type": "integer",
+            "description": "유료 아이템 권한 (0 : 미 사용(유료아이템 사용 불가 유저), 1 : 사용 가능, 2 : 사용 중)",
+            "format": "int32",
+            "default": 0
+          },
+          "artistIP": {
+            "type": "string",
+            "description": "아티스트IP 이미지 (현재는 상품 프로필로 전달), URL예) https://ba-profile-dev-cn.dear-u.co/{artistIP}"
+          },
+          "groupColor": {
+            "type": "string",
+            "description": "그룹색상, 예)\u0027f00aa7\u0027"
+          }
+        },
+        "description": "라이브톡 유료 아이템 권한"
+      },
+      "StoreLiveItemListResDTO": {
+        "type": "object",
+        "properties": {
+          "myTotalCoin": {
+            "type": "integer",
+            "description": "보유 코인",
+            "format": "int32",
+            "default": 0
+          },
+          "groupName": {
+            "type": "string",
+            "description": "이용권 그룹명"
+          },
+          "productName": {
+            "type": "string",
+            "description": "아이템 상품명"
+          },
+          "itemList": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ItemListVO"
+            }
+          }
+        },
+        "description": "라이브톡 아이템 상품 리스트 및 보유 코인"
+      },
+      "StoreLiveItemReqDTO": {
+        "required": [
+          "appGroup",
+          "deviceKey",
+          "language",
+          "locale",
+          "osType",
+          "starUserIdx",
+          "version"
+        ],
+        "type": "object",
+        "properties": {
+          "deviceKey": {
+            "type": "string",
+            "description": "기기(스마트폰) 식별자"
+          },
+          "version": {
+            "type": "string",
+            "description": "앱 버전"
+          },
+          "language": {
+            "type": "string",
+            "description": "언어"
+          },
+          "locale": {
+            "type": "string",
+            "description": "지역"
+          },
+          "osType": {
+            "type": "string",
+            "description": "OS종류 (‘0’: android, ‘1’: ios)"
+          },
+          "appGroup": {
+            "type": "string",
+            "description": "서비스 그룹"
+          },
+          "appMarket": {
+            "type": "string",
+            "description": "앱 마켓"
+          },
+          "appRegion": {
+            "type": "string",
+            "description": "앱 지역"
+          },
+          "starUserIdx": {
+            "type": "string",
+            "description": "아티스트 식별자"
+          }
+        },
+        "description": "라이브톡 아이템"
+      },
+      "StoreLiveItemSubtractResDTO": {
+        "type": "object",
+        "properties": {
+          "authority": {
+            "type": "integer",
+            "description": "유료 아이템 권한 (0 : 미 사용(유료아이템 사용 불가 유저), 1 : 사용 가능, 2 : 사용 중)",
+            "format": "int32",
+            "default": 0
+          }
+        },
+        "description": "라이브톡 유료 아이템 사용 후 결과"
+      }
+    },
+    "securitySchemes": {
+      "TOKEN": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "TOKEN"
+      }
+    }
+  }
+}
