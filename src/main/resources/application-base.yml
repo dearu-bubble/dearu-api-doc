@@ -5,7 +5,7 @@ springdoc:
     enabled: true
     url: /v3/api-docs  # Swagger UI에서 API 문서를 읽을 기본 URL
     urls:
-      - url: /docs/ba-common-api.json
+      - url: https://ba-common-api-dev.dear-u.co/v3/api-docs
         name: common-api
       - url: /docs/ba-live-api.json
         name: live-api
